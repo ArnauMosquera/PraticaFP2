@@ -7,26 +7,28 @@
 #define NUM_GENS 30
 
 int command_line(const int argc, const char *argv[], arguments *arg){
-    if (argc>1){
+    if (argc > 1) {
         int i = 1;
-        while(argc-i>0){
-            if(strcmp(argv[i],'-G')==0){
-                arg->g=atoi(argv[i+1]);
-                i+=2;
-            } else if (strcmp(argv[i],'-N')==0){
-                arg->n=atoi(argv[i+1]);
-                i+=2;
-            } else if (strcmp(argv[i],'-PROB')==0){
-                arg->n=atof(argv[i+1]);
-                i+=2;
-            } else if (strcmp(argv[i],'-K')==0){
-                arg->n=atoi(argv[i+1]);
-                i+=2;
+        while (i < argc) {
+            if (strcmp(argv[i], "-G") == 0 && i + 1 < argc) {
+                arg->g = atoi(argv[i + 1]);
+                i += 2;
+            } else if (strcmp(argv[i], "-N") == 0 && i + 1 < argc) {
+                arg->n = atoi(argv[i + 1]);
+                i += 2;
+            } else if (strcmp(argv[i], "-PROB") == 0 && i + 1 < argc) {
+                arg->prob = atof(argv[i + 1]);
+                i += 2;
+            } else if (strcmp(argv[i], "-K") == 0 && i + 1 < argc) {
+                arg->k = atoi(argv[i + 1]);
+                i += 2;
             } else {
-                printf("Opcio incorrecte\n");
+                printf("Opció incorrecta: %s\n", argv[i]);
+                i++;
             }
         }
     }
+    return 0;
 }
 
 
