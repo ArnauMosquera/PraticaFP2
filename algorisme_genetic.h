@@ -4,7 +4,11 @@
 
 #define NUM_GENS 30
 
-
+typedef struct arguments{
+    int g;
+    int n;
+    int k
+}arguments;
 int **crear_poblacio(int N);
 void alliberar_poblacio(int **poblacio, int N);
 int calcular_error(int *cromosoma);

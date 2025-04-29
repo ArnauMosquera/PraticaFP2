@@ -5,6 +5,9 @@
 
 #define NUM_GENS 30
 
+int command_line(int argc, char *argv[], 
+
+
 int **crear_poblacio(int N) {
     int **poblacio = (int **)malloc(N * sizeof(int *));
     if (poblacio == NULL) {
