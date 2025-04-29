@@ -5,7 +5,8 @@
 
 #define NUM_GENS 30
 
-int main(void) {
+int main(const int argc,const char *argv[]) {
+    arguments arg = {G_DEFAULT, N_DEFAULT, PROB_DEFAULT, K_DEFAULT};
     int N = 40;
     srand(time(NULL));
 
