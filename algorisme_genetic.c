@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
+
 #include "algorisme_genetic.h"
 
 #define NUM_GENS 30
@@ -30,7 +27,6 @@ int command_line(const int argc, const char *argv[], arguments *arg){
     }
     return 0;
 }
-
 
 int **crear_poblacio(int N) {
     int **poblacio = (int **)malloc(N * sizeof(int *));
@@ -107,4 +103,83 @@ int **seleccio_tournament(int **poblacio, int N, int K) {
     }
 
     return seleccionats;
+}
+
+int **crossover(int **seleccionats, int N){
+    int **descendents = (int **)malloc(N * sizeof(int *));
+    if (descendents == NULL) {
+        fprintf(stderr, "Error: No s'ha pogut reservar memoria per als descendents.\n");
+        exit(1);
+    }
+
+    // Processem els pares de dos en dos
+    int i;
+    for (i = 0; i < N - 1; i += 2) {
+        int *pare1 = seleccionats[i];
+        int *pare2 = seleccionats[i + 1];
+
+        // Reservem memòria per als fills
+        descendents[i] = (int*)malloc(NUM_GENS * sizeof(int));
+        descendents[i + 1] = (int*)malloc(NUM_GENS * sizeof(int));
+        if (descendents[i] == NULL || descendents[i + 1] == NULL) {
+            fprintf(stderr, "Error: No s'ha pogut reservar memoria per als fills %d o %d.\n", i, i + 1);
+            for (int j = 0; j < i; j++) {
+                free(descendents[j]);
+            }
+            exit(1);
+        }
+
+        // Punt de creuament aleatori
+        int punt_crossover = 1 + rand() % (NUM_GENS - 1);
+
+        // Creació dels fills
+        for (int j = 0; j < NUM_GENS; j++) {
+            if (j < punt_crossover) {
+                descendents[i][j] = pare1[j];
+                descendents[i + 1][j] = pare2[j];
+            } else {
+                descendents[i][j] = pare2[j];
+                descendents[i + 1][j] = pare1[j];
+            }
+        }
+    }
+
+    // Si N és senar, copiem l'últim individu sense creuament
+    if (N % 2 != 0) {
+        descendents[N - 1] = (int*)malloc(NUM_GENS * sizeof(int));
+        if (descendents[N - 1] == NULL) {
+            fprintf(stderr, "Error: No s'ha pogut reservar memoria per al darrer individu.\n");
+            for (int j = 0; j < N - 1; j++) {
+                free(descendents[j]);
+            }
+            exit(1);
+        }
+        for (int j = 0; j < NUM_GENS; j++) {
+            descendents[N - 1][j] = seleccionats[N - 1][j];
+        }
+    }
+
+    return descendents;
+}
+
+void mutacio(int **poblacio, int N, float prob_mutacio){
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < NUM_GENS; j++) {
+            //Generem un nombre aleatori entre 0.0 i 1.0 
+            double prob_aleatoria = (double)rand() / RAND_MAX;
+            if (prob_aleatoria < prob_mutacio) {
+                //Camviem el bit
+                poblacio[i][j] = 1 - poblacio[i][j];
+            }
+        }
+    }
+}
+
+void actualitzar_millor(int *millor_cromosoma, int *candidat, int *millor_error, int error_candidat) {
+    if (error_candidat < *millor_error) {
+        *millor_error = error_candidat;
+        for (int i = 0; i < NUM_GENS; i++) {
+            millor_cromosoma[i] = candidat[i];
+        }
+    }
 }
